@@ -1,34 +1,31 @@
 import secrets
-import random
 import string
 
-def generate_password(length, letters=True, digits=True, punctuation=True):
-    """Generate a secure random password with the given length"""
-    # Start with an empty list of characters
-    characters = []
+def generate_password(length):
+    # Define the character set to use for the password
+    characters = string.ascii_letters + string.digits + string.punctuation + string.ascii_uppercase + string.ascii_lowercase
 
-    # Add letters to the list if specified
-    if letters:
-        characters += string.ascii_letters
+    # Generate a random string using the character set
+    password = ''.join(secrets.choice(characters) for i in range(length))
 
-    # Add digits to the list if specified
-    if digits:
-        characters += string.digits
+    # Make sure the password includes at least one uppercase letter, one lowercase letter, and one digit
+    if not any(c.islower() for c in password):
+        password = secrets.choice(string.ascii_lowercase) + password[1:]
+    if not any(c.isupper() for c in password):
+        password = secrets.choice(string.ascii_uppercase) + password[1:]
+    if not any(c.isdigit() for c in password):
+        password = secrets.choice(string.digits) + password[1:]
+    
+    # Ensure that the password includes at least one uppercase and one lowercase letter
+    if not any(c.islower() for c in password) or not any(c.isupper() for c in password):
+        password = secrets.choice(string.ascii_lowercase) + secrets.choice(string.ascii_uppercase) + password[2:]
 
-    # Add punctuation to the list if specified
-    if punctuation:
-        characters += string.punctuation
-
-    # Shuffle the list of characters to get a random order
-    random.shuffle(characters)
-    # Select the first `length` characters from the shuffled list
-    password = ''.join(characters[:length])
     return password
 
-# Generate a password with 10 characters, including letters and digits
-password = generate_password(10, letters=True, digits=True, punctuation=False)
+# Generate a password
+password = generate_password(16)
 print(password)
 
-# Generate a password with 15 characters, including letters, digits, and punctuation
-password = generate_password(15, letters=True, digits=True, punctuation=True)
-print(password)
+
+
+
